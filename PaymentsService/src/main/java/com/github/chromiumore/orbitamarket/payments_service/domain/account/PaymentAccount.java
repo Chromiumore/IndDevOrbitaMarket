@@ -1,4 +1,4 @@
-package com.github.chromiumore.orbitamarket.payments_service.domain;
+package com.github.chromiumore.orbitamarket.payments_service.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,15 +20,12 @@ public class PaymentAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("user_id")
     @Column(name = "user_id", nullable = false, unique = true)
     private UUID userId;
 
-    @JsonProperty("balance")
     @Column(nullable = false)
-    private Double amount = 0.0;
+    private Double balance = 0.0;
 
-    @JsonProperty("created_at")
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
