@@ -1,25 +1,23 @@
 package com.github.chromiumore.orbitamarket.payments_service.service;
 
 import com.github.chromiumore.orbitamarket.payments_service.domain.PaymentAccount;
-import com.github.chromiumore.orbitamarket.payments_service.exception.AccountNotFoundException;
 import com.github.chromiumore.orbitamarket.payments_service.repository.PaymentAccountRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentAccountService {
 
-    private PaymentAccountRepository accountRepository;
+    private final PaymentAccountRepository accountRepository;
 
+    @Transactional
     public PaymentAccount createAccount(UUID userId) {
-        PaymentAccount account = new PaymentAccount();
-        account.setUserId(userId);
-        return accountRepository.save(account);
-    }
-
-    public PaymentAccount getAccountByUserId(UUID userId) {
+        accountRepository.insertIgnore(userId);
         return accountRepository.findByUserId(userId)
-                .orElseThrow(() -> new AccountNotFoundException("Account for user: " + userId + " does not exist"));
+                .orElseThrow(() -> new IllegalStateException("Failed to create account"));
     }
 }
