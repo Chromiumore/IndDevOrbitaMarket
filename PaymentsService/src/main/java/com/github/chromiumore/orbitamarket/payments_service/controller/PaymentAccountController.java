@@ -22,7 +22,7 @@ public class PaymentAccountController {
     @PostMapping("/accounts")
     public ResponseEntity<AccountDto> createAccount(@RequestHeader(value = "X-User-Id", required = false) UUID userId) {
         if (userId == null) {
-            throw new MissingUserIdException("X-User_Id is not provided");
+            throw new MissingUserIdException("X-User-Id is not provided");
         }
         PaymentAccount account = accountService.createAccount(userId);
         return ResponseEntity.ok(AccountDto.from(account));
@@ -34,9 +34,18 @@ public class PaymentAccountController {
             @RequestBody TopUpRequest request
     ) {
         if (userId == null) {
-            throw new MissingUserIdException("X-User_Id is not provided");
+            throw new MissingUserIdException("X-User-Id is not provided");
         }
         PaymentAccount account = accountService.topUp(userId, request);
         return ResponseEntity.ok(BalanceDto.from(account));
+    }
+
+    @GetMapping("/accounts/balance")
+    public ResponseEntity<BalanceDto> getBalance(@RequestHeader(value = "X-User-Id", required = false) UUID userId) {
+        if (userId == null) {
+            throw new MissingUserIdException("X-User-Id is not provided");
+        }
+        BalanceDto balance = accountService.getBalance(userId);
+        return ResponseEntity.ok(balance);
     }
 }

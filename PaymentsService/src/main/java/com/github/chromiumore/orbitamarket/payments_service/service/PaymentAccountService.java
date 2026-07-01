@@ -7,11 +7,11 @@ import com.github.chromiumore.orbitamarket.payments_service.exception.AccountNot
 import com.github.chromiumore.orbitamarket.payments_service.exception.InvalidAmountException;
 import com.github.chromiumore.orbitamarket.payments_service.repository.PaymentAccountRepository;
 import jakarta.persistence.OptimisticLockException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -40,5 +40,12 @@ public class PaymentAccountService {
 
         account.setBalance(account.getBalance() + amount);
         return accountRepository.save(account);
+    }
+
+    @Transactional(readOnly = true)
+    public BalanceDto getBalance(UUID userId) {
+        PaymentAccount account = accountRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        return BalanceDto.from(account);
     }
 }
