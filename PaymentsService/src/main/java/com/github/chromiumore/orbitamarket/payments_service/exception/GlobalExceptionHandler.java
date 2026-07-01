@@ -25,4 +25,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidAmount(InvalidAmountException e) {
         return errorResponse(HttpStatus.BAD_REQUEST, "INVALID_AMOUNT", e.getMessage());
     }
+
+    @ExceptionHandler(MissingUserIdException.class)
+    public ResponseEntity<ErrorResponse> handleMissingUserId(MissingUserIdException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, "MISSING_USER_ID", e.getMessage());
+    }
 }
