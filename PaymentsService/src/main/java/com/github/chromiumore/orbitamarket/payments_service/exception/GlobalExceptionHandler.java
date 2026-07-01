@@ -20,4 +20,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAccountNotFound(AccountNotFoundException e) {
         return errorResponse(HttpStatus.NOT_FOUND, "ACCOUNT_NOT_FOUND", e.getMessage());
     }
+
+    @ExceptionHandler(InvalidAmountException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAmount(InvalidAmountException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, "INVALID_AMOUNT", e.getMessage());
+    }
 }
