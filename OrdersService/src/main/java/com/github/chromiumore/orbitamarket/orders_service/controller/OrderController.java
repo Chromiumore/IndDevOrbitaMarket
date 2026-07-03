@@ -52,7 +52,7 @@ public class OrderController {
         if (userId == null) {
             throw new MissingUserIdException("X-User-Id is not provided");
         }
-        Order order = orderService.getOrder(orderId);
+        Order order = orderService.getOrder(userId, orderId);
         return ResponseEntity.ok(OrderDto.from(order));
     }
 }

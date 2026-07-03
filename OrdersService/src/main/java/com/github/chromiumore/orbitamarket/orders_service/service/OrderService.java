@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -53,10 +50,14 @@ public class OrderService {
         return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    public Order getOrder(Long orderId) {
-        return orderRepository.findById(orderId).orElseThrow(
-                () -> new OrderNotFoundException("Order not found")
-        );
+    public Order getOrder(UUID userId, Long orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+
+        if (order.isEmpty() || !order.get().getUserId().equals(userId)) {
+            throw  new OrderNotFoundException("Order not found");
+        }
+
+        return order.get();
     }
 
     private String convertMapToJson(Map<String, Object> map) {
