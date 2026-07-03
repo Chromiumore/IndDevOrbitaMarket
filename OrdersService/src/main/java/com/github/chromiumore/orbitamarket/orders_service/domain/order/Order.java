@@ -1,9 +1,12 @@
 package com.github.chromiumore.orbitamarket.orders_service.domain.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -31,7 +34,7 @@ public class Order {
     @Column(nullable = false)
     private Long price;
 
-    @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String payload;
 
     @Column(name = "failure_reason")
@@ -40,6 +43,7 @@ public class Order {
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
+    @JsonIgnore
     @Version
     private Long version;
 }
