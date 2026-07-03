@@ -4,7 +4,7 @@ import java.util.Map;
 
 public record CreateOrderRequest(
         String productType,
-        Long price,
+        Double price,
         Map<String, Object> payload
 ) {
 }

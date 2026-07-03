@@ -2,6 +2,7 @@ package com.github.chromiumore.orbitamarket.orders_service.controller;
 
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
+import com.github.chromiumore.orbitamarket.orders_service.dto.OrderDto;
 import com.github.chromiumore.orbitamarket.orders_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,11 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(
+    public ResponseEntity<OrderDto> createOrder(
             @RequestHeader(value = "X-User-Id") UUID userId,
             @RequestBody CreateOrderRequest request
     ) {
         Order order = orderService.createOrder(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(OrderDto.from(order));
     }
 }

@@ -32,7 +32,7 @@ public class Order {
     private String productType;
 
     @Column(nullable = false)
-    private Long price;
+    private Double price;
 
     @JdbcTypeCode(SqlTypes.JSON)
     private String payload;
