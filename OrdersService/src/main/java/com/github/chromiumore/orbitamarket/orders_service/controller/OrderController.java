@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,5 +27,22 @@ public class OrderController {
     ) {
         Order order = orderService.createOrder(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(OrderDto.from(order));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderDto>> getUserOrders(
+            @RequestHeader(value = "X-User-Id") UUID userId
+    ) {
+        List<Order> orders = orderService.getUserOrdersData(userId);
+        return ResponseEntity.ok(orders.stream().map(OrderDto::from).toList());
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDto> getOrder(
+            @RequestHeader("X-User-Id") UUID userId,
+            @PathVariable("orderId") Long orderId
+    ) {
+        Order order = orderService.getOrder(orderId);
+        return ResponseEntity.ok(OrderDto.from(order));
     }
 }

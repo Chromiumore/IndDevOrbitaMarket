@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStatus;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
+import com.github.chromiumore.orbitamarket.orders_service.dto.OrderDto;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,6 +32,16 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CREATED);
         return orderRepository.save(order);
+    }
+
+    public List<Order> getUserOrdersData(UUID userId) {
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    public Order getOrder(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow(
+                () -> new RuntimeException("Order not found")
+        );
     }
 
     private String convertMapToJson(Map<String, Object> map) {
