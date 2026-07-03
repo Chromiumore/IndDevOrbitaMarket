@@ -25,4 +25,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidPrice(InvalidPriceExcepion e) {
         return errorResponse(HttpStatus.BAD_REQUEST, "INVALID_PRICE", e.getMessage());
     }
+
+    @ExceptionHandler(UnknownProductTypeException.class)
+    public ResponseEntity<ErrorResponse> handleUnknownProductType(UnknownProductTypeException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, "UNKNOWN_PRODUCT_TYPE", e.getMessage());
+    }
 }

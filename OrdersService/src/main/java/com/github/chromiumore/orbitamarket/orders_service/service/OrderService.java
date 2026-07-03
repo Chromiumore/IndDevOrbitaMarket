@@ -4,14 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStatus;
+import com.github.chromiumore.orbitamarket.orders_service.domain.order.ProductType;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
 import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceExcepion;
 import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
+import com.github.chromiumore.orbitamarket.orders_service.exception.UnknownProductTypeException;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +31,13 @@ public class OrderService {
         if (price <= 0) {
             throw new InvalidPriceExcepion("Price must be grater than zero");
         }
+
+        String productType = request.productType();
+        if (Arrays.stream(ProductType.values())
+                .noneMatch(e -> e.name().equals(productType))) {
+            throw new UnknownProductTypeException("Unknown product type: " + productType);
+        }
+
         Order order = new Order();
         order.setUserId(userId);
         order.setProductType(request.productType());
