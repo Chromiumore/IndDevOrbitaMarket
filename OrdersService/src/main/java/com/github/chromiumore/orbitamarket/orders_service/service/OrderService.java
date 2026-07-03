@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStatus;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
-import com.github.chromiumore.orbitamarket.orders_service.dto.OrderDto;
+import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class OrderService {
 
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(
-                () -> new RuntimeException("Order not found")
+                () -> new OrderNotFoundException("Order not found")
         );
     }
 
