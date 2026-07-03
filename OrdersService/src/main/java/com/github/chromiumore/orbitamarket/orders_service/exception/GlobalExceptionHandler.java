@@ -30,4 +30,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUnknownProductType(UnknownProductTypeException e) {
         return errorResponse(HttpStatus.BAD_REQUEST, "UNKNOWN_PRODUCT_TYPE", e.getMessage());
     }
+
+    @ExceptionHandler(MissingUserIdException.class)
+    public ResponseEntity<ErrorResponse> handleMissingUserId(MissingUserIdException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, "MISSING_USER_ID", e.getMessage());
+    }
 }
