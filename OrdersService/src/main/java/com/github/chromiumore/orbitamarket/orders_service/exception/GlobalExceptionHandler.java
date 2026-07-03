@@ -35,4 +35,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMissingUserId(MissingUserIdException e) {
         return errorResponse(HttpStatus.BAD_REQUEST, "MISSING_USER_ID", e.getMessage());
     }
+
+    @ExceptionHandler(InvalidPayloadException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPayload(InvalidPayloadException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, "INVALID_PAYLOAD", e.getMessage());
+    }
 }

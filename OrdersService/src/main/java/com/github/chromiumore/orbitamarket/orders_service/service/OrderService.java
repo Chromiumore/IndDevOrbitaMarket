@@ -6,6 +6,7 @@ import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStatus;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.ProductType;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
+import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPayloadException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceExcepion;
 import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.UnknownProductTypeException;
@@ -35,6 +36,8 @@ public class OrderService {
             throw new UnknownProductTypeException("Unknown product type: " + productType);
         }
 
+        validatePayload(request.payload());
+
         Order order = new Order();
         order.setUserId(userId);
         order.setProductType(request.productType());
@@ -60,11 +63,17 @@ public class OrderService {
         return order.get();
     }
 
-    private String convertMapToJson(Map<String, Object> map) {
+    private String convertMapToJson(Map<String, Object> payload) {
         try {
-            return objectMapper.writeValueAsString(map);
+            return objectMapper.writeValueAsString(payload);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error converting map to JSON", e);
+            throw new InvalidPayloadException("Failed to process order payload");
         }
+    }
+
+    private void validatePayload(Map<String, Object> payload) {
+         if (!(payload.containsKey("aoi") && payload.containsKey("capture_date") && payload.containsKey("sensor_type"))) {
+             throw new InvalidPayloadException("Invalid payload");
+         }
     }
 }
