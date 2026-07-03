@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStatus;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
+import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceExcepion;
 import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,10 @@ public class OrderService {
     private final ObjectMapper objectMapper;
 
     public Order createOrder(UUID userId, CreateOrderRequest request) {
+        Double price = request.price();
+        if (price <= 0) {
+            throw new InvalidPriceExcepion("Price must be grater than zero");
+        }
         Order order = new Order();
         order.setUserId(userId);
         order.setProductType(request.productType());

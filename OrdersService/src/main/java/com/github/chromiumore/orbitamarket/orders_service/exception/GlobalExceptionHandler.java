@@ -20,4 +20,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOrderNotFound(OrderNotFoundException e) {
         return errorResponse(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", e.getMessage());
     }
+
+    @ExceptionHandler(InvalidPriceExcepion.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPrice(InvalidPriceExcepion e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, "INVALID_PRICE", e.getMessage());
+    }
 }
