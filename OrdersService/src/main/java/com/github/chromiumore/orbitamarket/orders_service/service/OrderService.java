@@ -25,18 +25,6 @@ public class OrderService {
     private final ObjectMapper objectMapper;
 
     public Order createOrder(UUID userId, CreateOrderRequest request) {
-        Double price = request.price();
-        if (price <= 0) {
-            throw new InvalidPriceExcepion("Price must be grater than zero");
-        }
-
-        String productType = request.productType();
-        if (Arrays.stream(ProductType.values())
-                .noneMatch(e -> e.name().equals(productType))) {
-            throw new UnknownProductTypeException("Unknown product type: " + productType);
-        }
-
-        validatePayload(request.payload());
 
         Order order = new Order();
         order.setUserId(userId);
@@ -44,6 +32,26 @@ public class OrderService {
         order.setPrice(request.price());
         order.setPayload(convertMapToJson(request.payload()));
         order.setCreatedAt(Instant.now());
+
+        RuntimeException exception = null;
+        if (request.price() <= 0) {
+            exception = new InvalidPriceExcepion("Price must be grater than zero");
+            order.setFailureReason("INVALID_PRICE");
+        } else if (Arrays.stream(ProductType.values())
+                .noneMatch(e -> e.name().equals(request.productType()))) {
+            exception = new UnknownProductTypeException("Unknown product type: " + request.productType());
+            order.setFailureReason("UNKNOWN_PRODUCT_TYPE");
+        } else if (!validatePayload(request.payload())) {
+            exception = new InvalidPayloadException("Invalid payload");
+            order.setFailureReason("INVALID_PAYLOAD");
+        }
+
+        if (exception != null) {
+            order.setStatus(OrderStatus.REJECTED);
+            orderRepository.save(order);
+
+            throw exception;
+        }
 
         order.setStatus(OrderStatus.CREATED);
         return orderRepository.save(order);
@@ -71,9 +79,7 @@ public class OrderService {
         }
     }
 
-    private void validatePayload(Map<String, Object> payload) {
-         if (!(payload.containsKey("aoi") && payload.containsKey("capture_date") && payload.containsKey("sensor_type"))) {
-             throw new InvalidPayloadException("Invalid payload");
-         }
+    private boolean validatePayload(Map<String, Object> payload) {
+        return payload.containsKey("aoi") && payload.containsKey("capture_date") && payload.containsKey("sensor_type");
     }
 }
