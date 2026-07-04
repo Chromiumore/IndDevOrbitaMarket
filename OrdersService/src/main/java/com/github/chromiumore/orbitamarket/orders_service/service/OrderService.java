@@ -10,6 +10,8 @@ import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPaylo
 import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceExcepion;
 import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.UnknownProductTypeException;
+import com.github.chromiumore.orbitamarket.orders_service.kafka.KafkaService;
+import com.github.chromiumore.orbitamarket.orders_service.kafka.KafkaUtils;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrderService {
 
+    public final static String ORDER_EVENTS_TOPIC = "orders-payment-requests";
     private final OrderRepository orderRepository;
+    private final KafkaService kafkaService;
     private final ObjectMapper objectMapper;
 
     public Order createOrder(UUID userId, CreateOrderRequest request) {
@@ -54,7 +58,11 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.CREATED);
-        return orderRepository.save(order);
+        order = orderRepository.save(order);
+
+        kafkaService.sendToKafka(ORDER_EVENTS_TOPIC, KafkaUtils.createEvent(order));
+
+        return order;
     }
 
     public List<Order> getUserOrdersData(UUID userId) {
