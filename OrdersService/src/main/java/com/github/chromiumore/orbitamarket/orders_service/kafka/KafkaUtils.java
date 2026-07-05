@@ -6,8 +6,8 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class KafkaUtils {
-    public static OrderPaymentRequested createEvent(Order order) {
-        return new OrderPaymentRequested(
+    public static OrderPaymentRequest createEvent(Order order) {
+        return new OrderPaymentRequest(
                 UUID.randomUUID(), order.getId(), order.getUserId(), order.getPrice(), Instant.now()
         );
     }

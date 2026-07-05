@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaService {
 
-    private final KafkaTemplate<String, OrderPaymentRequested> kafkaTemplate;
+    private final KafkaTemplate<String, OrderPaymentRequest> kafkaTemplate;
 
-    public void sendToKafka(String topic, OrderPaymentRequested event) {
+    public void sendToKafka(String topic, OrderPaymentRequest event) {
         kafkaTemplate.send(topic, event);
     }
 }
