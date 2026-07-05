@@ -4,6 +4,7 @@ import com.github.chromiumore.orbitamarket.payments_service.domain.account.Payme
 import com.github.chromiumore.orbitamarket.payments_service.dto.BalanceDto;
 import com.github.chromiumore.orbitamarket.payments_service.dto.TopUpRequest;
 import com.github.chromiumore.orbitamarket.payments_service.exception.AccountNotFoundException;
+import com.github.chromiumore.orbitamarket.payments_service.exception.InsufficientBalanceException;
 import com.github.chromiumore.orbitamarket.payments_service.exception.InvalidAmountException;
 import com.github.chromiumore.orbitamarket.payments_service.repository.PaymentAccountRepository;
 import jakarta.persistence.OptimisticLockException;
@@ -39,6 +40,25 @@ public class PaymentAccountService {
                 .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         account.setBalance(account.getBalance() + amount);
+        return accountRepository.save(account);
+    }
+
+    @Retryable(retryFor = { OptimisticLockException.class }, maxAttempts = 5, backoff = @Backoff(delay = 100))
+    @Transactional
+    public PaymentAccount debitForOrder(UUID userId, Long orderId, Double amount) {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be greater than zero");
+        }
+
+        PaymentAccount account = accountRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+
+        Double currentBalance = account.getBalance();
+        if (currentBalance < amount) {
+            throw new InsufficientBalanceException("Insufficient balance");
+        }
+
+        account.setBalance(currentBalance - amount);
         return accountRepository.save(account);
     }
 
