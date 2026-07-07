@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class OrderEventListener {
 
     public final static String ORDER_EVENTS_TOPIC = "orders-payment-requests";
+    public final static String PAYMENT_EVENTS_TOPIC = "order-payment-responses";
 
     private final PaymentAccountService accountService;
     private final KafkaService kafkaService;
@@ -24,10 +25,10 @@ public class OrderEventListener {
             PaymentAccount account = accountService.debitForOrder(event.userId(), event.orderId(), event.amount());
             ack.acknowledge();
 
-            kafkaService.sendToKafka(ORDER_EVENTS_TOPIC, KafkaUtils.createCompletedEvent(account, event.orderId(), event.amount()));
+            kafkaService.sendToKafka(PAYMENT_EVENTS_TOPIC, KafkaUtils.createCompletedEvent(account, event.orderId(), event.amount()));
         } catch (Exception e) {
             log.error("Failed to process order payment", e);
-            kafkaService.sendToKafka(ORDER_EVENTS_TOPIC, KafkaUtils.createFailedEvent(event.userId(), event.orderId(), e.getMessage()));
+            kafkaService.sendToKafka(PAYMENT_EVENTS_TOPIC, KafkaUtils.createFailedEvent(event.userId(), event.orderId(), e.getMessage()));
 
             throw e;
         }
