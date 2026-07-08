@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
         return errorResponse(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", e.getMessage());
     }
 
-    @ExceptionHandler(InvalidPriceExcepion.class)
-    public ResponseEntity<ErrorResponse> handleInvalidPrice(InvalidPriceExcepion e) {
+    @ExceptionHandler(InvalidPriceException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPrice(InvalidPriceException e) {
         return errorResponse(HttpStatus.BAD_REQUEST, "INVALID_PRICE", e.getMessage());
     }
 

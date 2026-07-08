@@ -7,10 +7,9 @@ import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStat
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.ProductType;
 import com.github.chromiumore.orbitamarket.orders_service.dto.CreateOrderRequest;
 import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPayloadException;
-import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceExcepion;
+import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.UnknownProductTypeException;
-import com.github.chromiumore.orbitamarket.orders_service.dto.event.OrderPaymentRequest;
 import com.github.chromiumore.orbitamarket.orders_service.kafka.producer.OrderProducer;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import com.github.chromiumore.orbitamarket.orders_service.service.outbox.OrderPaymentsOutboxService;
@@ -30,7 +29,7 @@ public class OrderService {
     private final OrderProducer orderProducer;
     private final ObjectMapper objectMapper;
 
-    @Transactional
+    @Transactional(dontRollbackOn = { InvalidPriceException.class, UnknownProductTypeException.class, InvalidPayloadException.class })
     public Order createOrder(UUID userId, CreateOrderRequest request) {
 
         Order order = new Order();
@@ -42,7 +41,7 @@ public class OrderService {
 
         RuntimeException exception = null;
         if (request.price() <= 0) {
-            exception = new InvalidPriceExcepion("Price must be grater than zero");
+            exception = new InvalidPriceException("Price must be grater than zero");
             order.setFailureReason("INVALID_PRICE");
         } else if (Arrays.stream(ProductType.values())
                 .noneMatch(e -> e.name().equals(request.productType()))) {
