@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PaymentEventListener {
+public class OrderConsumer {
 
     public final static String PAYMENT_EVENTS_TOPIC = "order-payment-responses";
 

@@ -1,4 +1,4 @@
-package com.github.chromiumore.orbitamarket.payments_service.kafka;
+package com.github.chromiumore.orbitamarket.payments_service.dto.event;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
