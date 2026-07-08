@@ -13,6 +13,8 @@ import com.github.chromiumore.orbitamarket.orders_service.exception.UnknownProdu
 import com.github.chromiumore.orbitamarket.orders_service.dto.event.OrderPaymentRequest;
 import com.github.chromiumore.orbitamarket.orders_service.kafka.producer.OrderProducer;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
+import com.github.chromiumore.orbitamarket.orders_service.service.outbox.OrderPaymentsOutboxService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +26,11 @@ import java.util.*;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderPaymentsOutboxService outboxService;
     private final OrderProducer orderProducer;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public Order createOrder(UUID userId, CreateOrderRequest request) {
 
         Order order = new Order();
@@ -59,7 +63,7 @@ public class OrderService {
         order.setStatus(OrderStatus.CREATED);
         order = orderRepository.save(order);
 
-        orderProducer.sendToKafka(OrderPaymentRequest.from(order));
+        outboxService.createOutboxEvent(order);
 
         return order;
     }
