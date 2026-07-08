@@ -1,7 +1,8 @@
-package com.github.chromiumore.orbitamarket.orders_service.kafka;
+package com.github.chromiumore.orbitamarket.orders_service.kafka.consumer;
 
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.OrderStatus;
+import com.github.chromiumore.orbitamarket.orders_service.dto.event.OrderPaymentResponse;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
