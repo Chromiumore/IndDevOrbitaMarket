@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record OrderPaymentResponse(
+public record PaymentResponseEvent(
         UUID eventId,
         Long orderId,
         UUID userId,
@@ -18,14 +18,14 @@ public record OrderPaymentResponse(
         String reason,
         String eventType
 ) {
-    public static OrderPaymentResponse createCompletedEvent(PaymentAccount account, Long orderId, Double amount) {
-        return new OrderPaymentResponse(
+    public static PaymentResponseEvent createCompletedEvent(PaymentAccount account, Long orderId, Double amount) {
+        return new PaymentResponseEvent(
                 UUID.randomUUID(), orderId, account.getUserId(), amount, account.getBalance(), null, "OrderPaymentCompleted"
         );
     }
 
-    public static OrderPaymentResponse createFailedEvent(UUID userId, Long orderId, String reason) {
-        return new OrderPaymentResponse(
+    public static PaymentResponseEvent createFailedEvent(UUID userId, Long orderId, String reason) {
+        return new PaymentResponseEvent(
                 UUID.randomUUID(), orderId, userId, null, null, reason, "OrderPaymentFailed"
         );
     }

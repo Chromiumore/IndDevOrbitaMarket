@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record OrderPaymentRequest(
+public record PaymentRequestedEvent(
         UUID eventId,
         Long orderId,
         UUID userId,
