@@ -8,15 +8,15 @@ import java.time.Instant;
 import java.util.UUID;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record OrderPaymentRequest(
+public record PaymentRequestedEvent(
         UUID eventId,
         Long orderId,
         UUID userId,
         Double amount,
         Instant occurredAt
 ) {
-    public static OrderPaymentRequest from(Order order) {
-        return new OrderPaymentRequest(
+    public static PaymentRequestedEvent from(Order order) {
+        return new PaymentRequestedEvent(
                 UUID.randomUUID(), order.getId(), order.getUserId(), order.getPrice(), Instant.now()
         );
     }

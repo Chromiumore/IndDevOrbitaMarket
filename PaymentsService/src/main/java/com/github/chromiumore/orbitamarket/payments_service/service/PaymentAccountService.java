@@ -10,7 +10,7 @@ import com.github.chromiumore.orbitamarket.payments_service.exception.InvalidAmo
 import com.github.chromiumore.orbitamarket.payments_service.exception.event.EventDuplicateException;
 import com.github.chromiumore.orbitamarket.payments_service.exception.event.OrderDuplicateException;
 import com.github.chromiumore.orbitamarket.payments_service.repository.PaymentAccountRepository;
-import com.github.chromiumore.orbitamarket.payments_service.service.inbox.PaymentEventsInboxService;
+import com.github.chromiumore.orbitamarket.payments_service.service.inbox.InboxPaymentEventsService;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.UUID;
 public class PaymentAccountService {
 
     private final PaymentAccountRepository accountRepository;
-    private final PaymentEventsInboxService inboxService;
+    private final InboxPaymentEventsService inboxService;
 
     @Transactional
     public PaymentAccount createAccount(UUID userId) {

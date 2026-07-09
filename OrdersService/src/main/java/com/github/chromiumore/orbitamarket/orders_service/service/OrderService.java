@@ -10,12 +10,12 @@ import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPaylo
 import com.github.chromiumore.orbitamarket.orders_service.exception.InvalidPriceException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.OrderNotFoundException;
 import com.github.chromiumore.orbitamarket.orders_service.exception.UnknownProductTypeException;
-import com.github.chromiumore.orbitamarket.orders_service.kafka.producer.OrderProducer;
+import com.github.chromiumore.orbitamarket.orders_service.kafka.producer.PaymentEventProducer;
 import com.github.chromiumore.orbitamarket.orders_service.repository.OrderRepository;
-import com.github.chromiumore.orbitamarket.orders_service.service.outbox.OrderPaymentsOutboxService;
-import jakarta.transaction.Transactional;
+import com.github.chromiumore.orbitamarket.orders_service.service.outbox.OutboxPaymentEventsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
@@ -25,11 +25,11 @@ import java.util.*;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderPaymentsOutboxService outboxService;
-    private final OrderProducer orderProducer;
+    private final OutboxPaymentEventsService outboxService;
+    private final PaymentEventProducer paymentProducer;
     private final ObjectMapper objectMapper;
 
-    @Transactional(dontRollbackOn = { InvalidPriceException.class, UnknownProductTypeException.class, InvalidPayloadException.class })
+    @Transactional(noRollbackFor = { InvalidPriceException.class, UnknownProductTypeException.class, InvalidPayloadException.class })
     public Order createOrder(UUID userId, CreateOrderRequest request) {
 
         Order order = new Order();
@@ -67,10 +67,12 @@ public class OrderService {
         return order;
     }
 
+    @Transactional(readOnly = true)
     public List<Order> getUserOrdersData(UUID userId) {
         return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
+    @Transactional(readOnly = true)
     public Order getOrder(UUID userId, Long orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
 

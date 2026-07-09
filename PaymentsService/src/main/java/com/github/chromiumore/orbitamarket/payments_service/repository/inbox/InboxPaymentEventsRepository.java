@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface PaymentEventsInboxRepository extends JpaRepository<InboxPaymentEvent, UUID> {
+public interface InboxPaymentEventsRepository extends JpaRepository<InboxPaymentEvent, UUID> {
     Optional<InboxPaymentEvent> findByOrderId(Long orderId);
 }

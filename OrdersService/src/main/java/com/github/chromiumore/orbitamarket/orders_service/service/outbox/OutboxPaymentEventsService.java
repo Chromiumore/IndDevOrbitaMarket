@@ -2,10 +2,10 @@ package com.github.chromiumore.orbitamarket.orders_service.service.outbox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.chromiumore.orbitamarket.orders_service.domain.order.Order;
-import com.github.chromiumore.orbitamarket.orders_service.domain.outbox.OrderPaymentsOutbox;
-import com.github.chromiumore.orbitamarket.orders_service.dto.event.OrderPaymentRequest;
-import com.github.chromiumore.orbitamarket.orders_service.kafka.producer.OrderProducer;
-import com.github.chromiumore.orbitamarket.orders_service.repository.outbox.OrderPaymentsOutboxRepository;
+import com.github.chromiumore.orbitamarket.orders_service.domain.outbox.OutboxPaymentEvent;
+import com.github.chromiumore.orbitamarket.orders_service.dto.event.PaymentRequestedEvent;
+import com.github.chromiumore.orbitamarket.orders_service.kafka.producer.PaymentEventProducer;
+import com.github.chromiumore.orbitamarket.orders_service.repository.outbox.OutboxPaymentEventsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,23 +14,22 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrderPaymentsOutboxService {
+public class OutboxPaymentEventsService {
 
-    private final OrderPaymentsOutboxRepository outboxRepository;
-    private final OrderProducer producer;
+    private final OutboxPaymentEventsRepository outboxRepository;
+    private final PaymentEventProducer producer;
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public OrderPaymentsOutbox createOutboxEvent(Order order) {
+    public OutboxPaymentEvent createOutboxEvent(Order order) {
 
         try {
-            String payload = objectMapper.writeValueAsString(OrderPaymentRequest.from(order));
-            OrderPaymentsOutbox outbox = new OrderPaymentsOutbox();
+            String payload = objectMapper.writeValueAsString(PaymentRequestedEvent.from(order));
+            OutboxPaymentEvent outbox = new OutboxPaymentEvent();
             outbox.setAggregateId(order.getId());
             outbox.setEventType("OrderPaymentRequested");
             outbox.setPayload(payload);
@@ -45,11 +44,11 @@ public class OrderPaymentsOutboxService {
     @Scheduled(fixedDelay = 5000)
     @Transactional
     public void publishAllPendingEvents() {
-        List<OrderPaymentsOutbox> outboxEvents = outboxRepository.findBySentAtIsNull();
+        List<OutboxPaymentEvent> outboxEvents = outboxRepository.findBySentAtIsNull();
 
-        for (OrderPaymentsOutbox event : outboxEvents) {
+        for (OutboxPaymentEvent event : outboxEvents) {
             try {
-                OrderPaymentRequest paymentEvent = objectMapper.readValue(event.getPayload(), OrderPaymentRequest.class);
+                PaymentRequestedEvent paymentEvent = objectMapper.readValue(event.getPayload(), PaymentRequestedEvent.class);
                 producer.sendToKafka(paymentEvent);
 
                 event.setSentAt(Instant.now());

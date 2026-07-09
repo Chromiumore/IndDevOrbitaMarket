@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record OrderPaymentResponse(
+public record PaymentResponseEvent(
         UUID eventId,
         Long orderId,
         UUID userId,

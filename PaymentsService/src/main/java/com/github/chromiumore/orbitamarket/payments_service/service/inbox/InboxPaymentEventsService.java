@@ -2,7 +2,7 @@ package com.github.chromiumore.orbitamarket.payments_service.service.inbox;
 
 import com.github.chromiumore.orbitamarket.payments_service.domain.inbox.InboxPaymentEvent;
 import com.github.chromiumore.orbitamarket.payments_service.dto.event.PaymentRequestedEvent;
-import com.github.chromiumore.orbitamarket.payments_service.repository.inbox.PaymentEventsInboxRepository;
+import com.github.chromiumore.orbitamarket.payments_service.repository.inbox.InboxPaymentEventsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +13,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PaymentEventsInboxService {
+public class InboxPaymentEventsService {
 
-    private final PaymentEventsInboxRepository inboxRepository;
+    private final InboxPaymentEventsRepository inboxRepository;
 
     @Transactional
     public InboxPaymentEvent createInboxEvent(PaymentRequestedEvent event) {
