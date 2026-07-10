@@ -12,6 +12,7 @@ spring:
                 - Path=/orders/**
               filters:
                 - StripPrefix=1
+                - PrefixPath=/api/v1/orders
 
             - id: payments_service_route
               uri: http://${PAYMENTS_HOST:localhost:8082}
@@ -19,3 +20,4 @@ spring:
                 - Path=/payments/**
               filters:
                 - StripPrefix=1
+                - PrefixPath=/api/v1/payments
