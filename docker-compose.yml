@@ -36,6 +36,16 @@ services:
             timeout: 5s
             retries: 5
             start_period: 10s
+            
+    api-gateway:
+        build: ./Gateway
+        container_name: gateway
+        environment:
+            - SERVER_PORT=8080
+            - ORDERS_URI=orders-service:8081
+            - PAYMENTS_URI=payments-service:8082
+        ports:
+            - "8080:8080"
     
     db:
         image: postgres:16-alpine
