@@ -13,6 +13,7 @@ spring:
               filters:
                 - StripPrefix=1
                 - PrefixPath=/api/v1/orders
+                - RewritePath=/api/v1/orders/$, /api/v1/orders
 
             - id: payments_service_route
               uri: http://${PAYMENTS_HOST:localhost:8082}
@@ -21,3 +22,4 @@ spring:
               filters:
                 - StripPrefix=1
                 - PrefixPath=/api/v1/payments
+                - RewritePath=/api/v1/payments/$, /api/v1/payments
