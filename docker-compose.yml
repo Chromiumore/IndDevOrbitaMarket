@@ -42,8 +42,8 @@ services:
         container_name: gateway
         environment:
             - SERVER_PORT=8080
-            - ORDERS_URI=orders-service:8081
-            - PAYMENTS_URI=payments-service:8082
+            - ORDERS_HOST=orders-service:8081
+            - PAYMENTS_HOST=payments-service:8082
         ports:
             - "8080:8080"
     
