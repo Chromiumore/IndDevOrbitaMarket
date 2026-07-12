@@ -7,7 +7,7 @@ services:
             - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/orbita_market_db
             - SPRING_DATASOURCE_USERNAME${POSTGRES_USERNAME}
             - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
-            - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO}
+            - SPRING_JPA_HIBERNATE_DDL_AUTO=update
             - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9093
         ports:
             - "8081:8081"
@@ -26,7 +26,7 @@ services:
             - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/orbita_market_db
             - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
             - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
-            - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO}
+            - SPRING_JPA_HIBERNATE_DDL_AUTO=update
             - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9093
         ports:
             - "8082:8082"
